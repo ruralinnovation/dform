@@ -1,5 +1,15 @@
 # UPDATE: User-Agent header hack is not working. Replacing download.file with CORI-brewed download_file
 
+#' @importFrom R6 R6Class
+#' @importFrom zip unzip
+#' @importFrom glue glue_data
+#' @importFrom rappdirs user_cache_dir
+#' @importFrom purrr walk2
+#' @importFrom crayon red green
+#' @importFrom cli symbol
+#' @importFrom data.table as.data.table setDT rbindlist fread setnames setkey
+NULL
+
 #' R6 Class for downloading, caching, and basic processing of SEC Form D data
 #'
 #' @description
