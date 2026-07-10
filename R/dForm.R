@@ -26,18 +26,35 @@ dForm <- R6::R6Class('dForm',
                        #' @param quarter Quarters to download. Defaults to all quarters (1 to 4).
                        #' @param remove_duplicates If `TRUE`, the previous accession numbers in the `offerings` data will be used to de-duplicate the data
                        #' @param use_cache If `TRUE`, read data from cached downloads. Otherwise, download and load the data.
+                       #' @param contact Requester identity (organization + contact email) passed to
+                       #'   the downloader and appended to the User-Agent. Required: SEC blocks
+                       #'   requests that do not declare a contact. No default.
                        #' @return self for method chaining
                        #' @export
                        #'
-                       load_data = function(years, quarter = c(1:4), remove_duplicates = TRUE, use_cache = TRUE){
-                         
+                       load_data = function(years, quarter = c(1:4), remove_duplicates = TRUE, use_cache = TRUE, contact){
+
                          stopifnot(is.numeric(years))
                          stopifnot(is.numeric(quarter))
                          if (max(quarter) > 4 | min(quarter) < 1){
                            stop("Quarter must be a numeric vector or value between 1 and 4", call. = FALSE)
                          }
-                         
-                         private$download(years, quarter, usecache = use_cache)
+
+                         # Validate `contact` here, up front: private$download() wraps each
+                         # download in a tryCatch that swallows errors as "data unavailable,
+                         # skipping", so a missing/blank contact would otherwise surface only
+                         # as a confusing empty-directory error much later. SEC blocks Form D
+                         # downloads whose User-Agent does not declare the requester.
+                         if (missing(contact) || !is.character(contact) ||
+                             length(contact) != 1L || !nzchar(trimws(contact))) {
+                           stop("`contact` is required and must be a single non-empty string ",
+                                "(organization + contact email, e.g. ",
+                                "'Center On Rural Innovation you@example.org'). SEC blocks ",
+                                "Form D downloads whose User-Agent does not declare the requester.",
+                                call. = FALSE)
+                         }
+
+                         private$download(years, quarter, usecache = use_cache, contact = contact)
                          private$load(remove_duplicates)
                          # private$make_codebook()
                          
@@ -114,7 +131,7 @@ dForm <- R6::R6Class('dForm',
                        fields = c('submissions', 'issuers', 'offerings', 'recipients', 'related_persons', 'signatures'),
                        link_ptn = "https://www.sec.gov/files/structureddata/data/form-d-data-sets/{year}q{quarter}_d{suffix}.zip",
                        dir_ptn = "{year}Q{quarter}_d",
-                       download = function(years, quarter, usecache){
+                       download = function(years, quarter, usecache, contact){
                          
                          link_dta <- data.table::as.data.table(expand.grid(year = years, quarter = quarter))
                          link_dta[, suffix := ifelse((year < 2014) & !(year == 2012 & quarter == 1), "_0", "")]
@@ -145,7 +162,7 @@ dForm <- R6::R6Class('dForm',
 
                                message(paste0("Retrieving data from: ", link))
 
-                               res <- download_file(link, download_path)
+                               res <- download_file(link, download_path, contact)
 
                                # Check res
                                if (!(download_path %in% res)) {

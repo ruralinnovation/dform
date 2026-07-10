@@ -26,3 +26,5 @@
 ^renv\.lock$
 ^renv\.*$
 ^ZiptoZcta_Crosswalk_2021\.xlsx$
+^\.claude$
+^index\.qmd$

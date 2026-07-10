@@ -51,7 +51,8 @@ Download and read Form D data for chosen years and quarters.
   years,
   quarter = c(1:4),
   remove_duplicates = TRUE,
-  use_cache = TRUE
+  use_cache = TRUE,
+  contact
 )}\if{html}{\out{</div>}}
 }
 
@@ -65,6 +66,10 @@ Download and read Form D data for chosen years and quarters.
 \item{\code{remove_duplicates}}{If \code{TRUE}, the previous accession numbers in the \code{offerings} data will be used to de-duplicate the data}
 
 \item{\code{use_cache}}{If \code{TRUE}, read data from cached downloads. Otherwise, download and load the data.}
+
+\item{\code{contact}}{Requester identity (organization + contact email) passed to
+the downloader and appended to the User-Agent. Required: SEC blocks
+requests that do not declare a contact. No default.}
 }
 \if{html}{\out{</div>}}
 }
