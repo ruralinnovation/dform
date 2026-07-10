@@ -85,7 +85,7 @@ combined <- dfm$combine_data(tables_to_combine = c("submissions", "offerings", "
 ::: callout-important
 ## SEC access requirement
 
-SEC's access policy requires a User-Agent that declares who you are with a contact email, so `load_data()` takes a **required** `contact` argument (no default) — your organization plus a contact email — which is threaded through to the downloader and appended to the User-Agent so SEC serves the data..
+SEC's access policy requires a User-Agent that declares who you are with a contact email, so `load_data()` takes a **required** `contact` argument (no default) — your organization plus a contact email — which is threaded through to the downloader and appended to the User-Agent so SEC serves the data.
 :::
 
 ## Core Functions
