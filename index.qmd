@@ -85,18 +85,7 @@ combined <- dfm$combine_data(tables_to_combine = c("submissions", "offerings", "
 ::: callout-important
 ## SEC access requirement
 
-SEC's access policy requires a User-Agent that declares who you are with a
-contact email. dForm's bundled downloader (`R/download_file.R`) sends a
-hardcoded Firefox User-Agent plus a `Referer: broadbandmap.fcc.gov` header — an
-FCC copy-paste that's both wrong for SEC and bot-looking — so SEC blocks it,
-returning a 403 "Request Rate Threshold Exceeded" page instead of the data.
-
-The fix is to make the Form D download send a SEC-compliant User-Agent.
-`load_data()` takes a **required** `contact` argument (no default) — your
-organization plus a contact email — threaded through to the downloader and
-appended to the User-Agent so SEC serves the data. Omitting it (or passing a
-blank/invalid value) raises a clear error up front rather than failing later
-with a confusing "no data" message.
+SEC's access policy requires a User-Agent that declares who you are with a contact email, so `load_data()` takes a **required** `contact` argument (no default) — your organization plus a contact email — which is threaded through to the downloader and appended to the User-Agent so SEC serves the data..
 :::
 
 ## Core Functions
