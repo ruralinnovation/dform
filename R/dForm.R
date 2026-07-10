@@ -239,6 +239,13 @@ dForm <- R6::R6Class('dForm',
                          message(paste0("typeof dirlist: ", typeof(dirlist)))
                          basename(dirlist[1])
 
+                         # Skip quarters that don't have this table: SEC's Form D schema
+                         # gained tables over time (e.g. RECIPIENTS.tsv is absent from the
+                         # earliest 2008 quarters), and fread() hard-errors on a missing
+                         # file. Reading only the quarters that actually have the file lets
+                         # the rest load normally.
+                         dirlist <- dirlist[file.exists(dirlist)]
+
                          if (!is.null(dirlist) && !is.null(dirlist) && length(dirlist) > 0) {
                            fl <- gsub("\\.tsv$", "", basename(dirlist[1]))
                            message("Loading ", fl, " from cache for selected years\n", sep  = '')
